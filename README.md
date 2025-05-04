@@ -2,6 +2,8 @@
 
 A multithreaded HTTP server written in C as part of a Computer Communication Applications course project. The server supports concurrent client requests using a custom thread pool and handles file and directory requests over HTTP.
 
+![Multithreaded HTTP Server](./Screenshot.png)
+
 ## Features
 
 * 📡 Handles HTTP GET requests concurrently using threads
@@ -10,6 +12,7 @@ A multithreaded HTTP server written in C as part of a Computer Communication App
 * 🛡️ Security checks for file permissions
 * 📋 Dynamic directory listing
 * 🚫 Error handling with proper HTTP response codes (400, 403, 404, 500)
+* 🏠 Includes a custom `index.html` as a default landing page for `/`
 
 ## File Structure
 
@@ -18,6 +21,8 @@ A multithreaded HTTP server written in C as part of a Computer Communication App
 ├── server.c          # Main server logic
 ├── threadpool.c/.h   # Thread pool implementation
 ├── CMakeLists.txt    # Build configuration for CMake
+├── index.html        # Custom landing page
+├── Screenshot.png    # Demonstration of landing page
 ```
 
 ## Prerequisites
@@ -57,26 +62,66 @@ Example:
 
 ## Testing
 
+### Manual Browser Test
+
 1. Start the server:
 
    ```bash
    ./server 8080 4 10 100
    ```
-2. Open a browser and go to:
+2. Open your browser and go to:
 
    ```
    http://localhost:8080
    ```
-3. Or test with curl:
 
-   ```bash
-   curl http://localhost:8080/index.html
-   ```
-4. Simulate multiple clients to observe multithreaded behavior.
+   You should see a styled landing page (`index.html`).
+
+### Terminal Tools
+
+* Use `curl`:
+
+  ```bash
+  curl http://localhost:8080/index.html
+  ```
+* Use `telnet`:
+
+  ```bash
+  telnet localhost 8080
+  GET /index.html HTTP/1.0
+
+  ```
+
+### Simulating File Permission Scenarios
+
+Create a few directories and files to test server behavior under different file access permissions:
+
+```bash
+mkdir A B C D
+
+echo "public" > A/file.txt
+chmod 644 A/file.txt
+
+echo "private" > B/hidden.txt
+chmod 000 B/hidden.txt
+
+echo "read-only" > C/readonly.txt
+chmod 444 C/readonly.txt
+
+echo "no-dir-access" > D/noaccess.txt
+chmod 700 D
+chmod 600 D/noaccess.txt
+```
+
+Now try to access those paths from the browser or via `curl`, and validate the returned HTTP status codes are correct (403 for forbidden, 404 if not found, etc.).
+
+```bash
+curl http://localhost:8080/B/hidden.txt
+```
 
 ## Sample Output
 
-```
+
 [+] Server started on port 8080
 [+] Accepted connection
 [+] Task queued for worker thread
@@ -102,4 +147,3 @@ This project was developed as part of the "Computer Communication Applications" 
 ## Contact
 
 For questions or feedback, feel free to contact **Noam Azrad** via [GitHub](https://github.com/Noam070)
-
