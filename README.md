@@ -126,7 +126,6 @@ curl http://localhost:8080/B/hidden.txt
 [+] Accepted connection
 [+] Task queued for worker thread
 [+] Request served successfully
-```
 
 ## Known Issues
 
